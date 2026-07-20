@@ -14,4 +14,12 @@ class ShopByReels extends Model
         'redirect_url',
         'status',
     ];
+
+    public function getEmbedUrlAttribute()
+    {
+        if (!$this->url) return '';
+        
+        $cleanUrl = strtok($this->url, '?');
+        return rtrim($cleanUrl, '/') . '/embed';
+    }
 }

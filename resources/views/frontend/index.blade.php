@@ -164,6 +164,21 @@
             margin-top: 20px;
             display: inline-block;
         }
+        .new-price-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #eee;
+            background: #fff;
+        }
+
+        .new-price-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .new-price-tag {
+            color: #333;
+            font-size: 0.95rem;
+        }
     </style>
 
     <!-- Style css -->
@@ -692,17 +707,22 @@
                 <div class="carousel-item active">
                     <div class="row g-3">
                         @foreach ($shop_by_reels as $reel)
+                            @php
+                                // Normal Instagram URL-a Embed URL-a convert panrom
+                                $embed_url = strtok($reel->url, '?'); // Query parameters ('?utm_source=...') ah remove panroam
+                                $embed_url = rtrim($embed_url, '/') . '/embed'; // Ennding-la /embed add panroam
+                            @endphp
+
                             <div class="reels-card">
                                 <article class="reel-card text-center h-100">
-                                    <div class="reel-media ratio ratio-16x9">
-                                        <iframe src="{{ $reel->url }}" allowfullscreen></iframe>
+                                    {{-- Reels kku vertical aspect ratio 9x16 thaan correct-a irukkum --}}
+                                    <div class="reel-media ratio ratio-9x16"> 
+                                        <iframe src="{{ $embed_url }}" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
 
                                         <!-- Overlay -->
                                         <div class="overlay">
-                                            <a href="{{ $reel->url ?? '' }}" class="icon"><i
-                                                    class="fab fa-instagram"></i></a>
-                                            <a href="{{ $reel->redirect_url ?? '' }}" class="icon"><i
-                                                    class="fas fa-shopping-cart"></i></a>
+                                            <a href="{{ $reel->url ?? '#' }}" target="_blank" class="icon"><i class="fab fa-instagram"></i></a>
+                                            <a href="{{ $reel->redirect_url ?? '#' }}" class="icon"><i class="fas fa-shopping-cart"></i></a>
                                         </div>
                                     </div>
                                     <p class="reel-title h6 mt-1 mb-3">{{ $reel->title ?? '' }}</p>
@@ -833,22 +853,34 @@
             </div>
 
             <!-- Swiper Container -->
-            <div class="swiper new-price-swiper" id="newPriceSwiper">
+           <div class="swiper new-price-swiper" id="newPriceSwiper">
                 <div class="swiper-wrapper">
-                    <!-- Price Slide -->
                     @foreach ($shop_by_prices as $shop_by_price)
                         <div class="swiper-slide">
-                            <div class="new-price-card">
-                                <div class="new-price-img-wrap">
-                                    {{-- <img src="{{ asset($shop_by_price->image) }}" alt="Under Rs.100" class="img-fluid"> --}}
-                                    <a href="{{ route('category.list', ['shop_by_price', $shop_by_price->slug ?? $shop_by_price->title]) }}">
-                                        <span class="new-price-tag">{{ $shop_by_price->title ?? '' }}</span></a>
-                                </div>
+                            <div class="new-price-card position-relative overflow-hidden rounded shadow-sm">
+                                <!-- URL Param: shop_by_price_id pass panroam -->
+                                <a href="{{ route('category.list', ['shop_by_price_id' => $shop_by_price->id]) }}" class="d-block text-decoration-none">
+                                    
+                                    {{-- Image Wrapper --}}
+                                    <div class="new-price-img-wrap">
+                                        <img src="{{ asset($shop_by_price->image) }}" 
+                                            alt="{{ $shop_by_price->title ?? 'Shop by Price' }}" 
+                                            class="img-fluid w-100 object-fit-cover">
+                                    </div>
+
+                                    {{-- Price Tag Overlay --}}
+                                    <div class="new-price-tag-wrap p-2 text-center">
+                                        <span class="new-price-tag fw-bold">{{ $shop_by_price->title ?? '' }}</span>
+                                    </div>
+
+                                </a>
                             </div>
                         </div>
                     @endforeach
-
                 </div>
+                
+                {{-- Swiper Controls (Optional: Dots / Navigation arrows needed na use pannikonga) --}}
+                {{-- <div class="swiper-pagination"></div> --}}
             </div>
         </div>
     </section>
