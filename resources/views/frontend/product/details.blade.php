@@ -526,7 +526,7 @@
             </div>
 
             <!-- Responsive grid: 2 cols on xs, 3 on md, 4 on lg, 5 on xl+ -->
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 row-cols-xl-5">
+            <div class="row row-cols-2 row-cols-md-2 row-cols-lg-4 row-cols-xl-5">
                 <!-- CARD -->
                 @foreach ($related_products as $seller)
                     <div class="col">
