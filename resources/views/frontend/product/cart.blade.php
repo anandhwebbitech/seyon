@@ -95,6 +95,7 @@
                         </div>
 
                         <!-- Cart Items -->
+                          <div class="cart-item" style="flex-direction: column;gap: 20px; overflow: scroll;">
                         @php
                             $subtotal = 0;
                         @endphp
@@ -103,9 +104,9 @@
                                 @php
                                     $subtotal += $cart->product->offer_price * $cart->quantity;
                                 @endphp
-                                <div class="cart-item">
-                                    <div class="row align-items-center w-100">
-                                        <div class="col-1">
+                               
+                                    <div class="d-flex justify-content-between align-items-center" style="gap: 20px;">
+                                        <div class=" ">
                                             <button class="remove-btn" data-url="{{ route('cart.remove') }}" onclick="removeCart( {{$cart->id}})">×</button>
                                         </div>
                                         <style>
@@ -118,10 +119,10 @@
                                                 margin-right: 4px;
                                             }
                                         </style>
-                                        <div class="col-4">
+                                        <div class=" ">
                                             <div class="product-info">
                                                 <img src="{{ asset($cart->product->product_img) }}"
-                                                    alt="Product" class="product-image">
+                                                    alt="Product" class="product-image" style="margin-bottom: 0;" >
                                                 <h6 class="product-name">{{ $cart->product->product_name }}</h6>
                                                 
                                                 <div class="color_picker ms-2">
@@ -135,25 +136,26 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-2">
+                                        <div class="d-flex">
                                             <span class="price-text">₹ {{ $cart->product->offer_price ?? ''}}</span>
                                         </div>
-                                        <div class="col-3">
+                                        <div class=" ">
                                             <div class="quantity-control">
                                                 <button data-url="{{ route('decrease.qty',$cart->id) }}" class="quantity-btn cart-page-dec">−</button>
                                                 <input type="text" class="quantity-input" id="qty-{{ $cart->id }}" min="1" value="{{ $cart->quantity }}" max="{{ $cart->product->quantity }}" readonly>
                                                 <button data-url="{{ route('increase.qty',$cart->id) }}" class="quantity-btn cart-page-inc">+</button>
                                             </div>
                                         </div>
-                                        <div class="col-2">
-                                            <span class="price-text subtotal" id="subtotal-{{ $cart->id }}" data-price="{{ $cart->product->offer_price }}">
+                                        <div class=" ">
+                                            <span class="price-text subtotal m-0" id="subtotal-{{ $cart->id }}" data-price="{{ $cart->product->offer_price }}">
                                                 ₹ {{ $cart->product->offer_price * $cart->quantity }}
                                             </span>
                                         </div>
                                     </div>
-                                </div>
+                               
                             @endforeach
                         @endif
+                         </div>
 
                     </div>
 

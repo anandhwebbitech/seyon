@@ -148,7 +148,7 @@
 
         .hero-cta {
             display: inline-block;
-            padding: 12px 28px;
+            /* padding: 12px 28px; */
             background: #ff6a00;
             color: #fff;
             font-weight: 600;
@@ -163,6 +163,9 @@
         .hero-cta {
             margin-top: 20px;
             display: inline-block;
+        }
+        .input-group{
+            margin: 15px 0;
         }
     </style>
 
@@ -519,16 +522,16 @@
 
     {{-- shop by age --}}
     @if ($shop_by_age->isNotEmpty())
-        <section class="shop-by-age py-5 mt-4">
+        <section class="shop-by-age py-5 mt-4" style="overflow: hidden;">
             <div class="container">
                 <h3 class="text-center">Shop By Age</h3>
             </div>
 
             <div class="age-section">
                 <div class="container">
-                    <div class="row justify-content-center g-4">
+                    <div class="row justify-content-center g-5">
                         @foreach ($shop_by_age as $shop)
-                            <div class="col-12 col-md-4 col-lg-2 age-card d-flex justify-content-center">
+                            <div class="col-6 col-md-4 col-lg-2 age-card d-flex justify-content-center">
                                 <div class="age-thumb">
                                     <a href="{{ route('category.list') }}?shop_by_age_id={{ $shop->id }}">
                                         {{-- <img src="{{ asset($shop->image) }}" alt="{{ $shop->title ?? '' }}" class="img-fluid rounded shadow-sm"> --}}
@@ -802,12 +805,12 @@
             <div class="row align-items-center">
 
                 <!-- Left Side: Kid Image -->
-                <div class="col-md-6 text-center">
+                <div class="col-6 text-center">
                     {{-- <img src="kid-image.png" alt="Kid" class="banner-img"> --}}
                 </div>
 
                 <!-- Right Side: Text and Button -->
-                <div class="col-md-6 content">
+                <div class="col-6 content">
                     <h2>Every color for every kid.</h2>
                     <button class="shop-btn">SHOP NOW</button>
                 </div>

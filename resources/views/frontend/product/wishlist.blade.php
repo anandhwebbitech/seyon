@@ -17,10 +17,10 @@
             <div class="row">
                 @if($wishlists->isNotEmpty())
                 @foreach ($wishlists as $wishlist)
-                    <div class="col-lg-3 col-md-6 col-6 my-3 product-card">
-                        <div class="card product-card1">
+                    <div class="col-lg-3 col-md-6 col-6 my-3">
+                        <div class="card product-card1" style="height: 100%;">
                             <!-- <span class="badge text-dark discount-badge">25% OFF</span> -->
-                            <div class="ratio ratio-4x3 position-relative">
+                            <div class="position-relative">
                                 <img src="{{ asset($wishlist->product->product_img) }}" class="card-img-top object-fit-cover"
                                     alt="Small Parking Lot Wooden Magnetic Alphabet Maze Puzzle for Kid">
                                 <div class="product-actions">
@@ -47,7 +47,7 @@
                                     <span class="text-muted text-decoration-line-through">₹ {{ $wishlist->product->orginal_rate ?? ''}}</span>
                                 </div>
                             </div>
-                            <div class="d-flex justify-content-end mb-3 me-2 me-2">
+                            <div class="d-flex justify-content-end mb-2">
                                 {{-- <a class="wish-but" href="#"><i class="bi bi-cart"></i>Add To Cart</a> --}}
                                 <a class="wish-but wishlist-remove" data-product-id="{{ $wishlist->product->id }}" 
                                     data-url="{{ route('remove.wishlist', $wishlist->product->id ) }}" 
