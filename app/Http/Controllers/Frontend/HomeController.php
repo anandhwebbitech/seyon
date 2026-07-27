@@ -43,7 +43,8 @@ class HomeController extends Controller
         $call_to_actions = CallToAction::where('status', 1)->get()->keyBy('name');
         $products = Product::with('colors')->where('status', 1)->get();
         $new_arrivals = $products->where('new_arrival', 1);
-        $best_seller = $products->where('best_sellers', 1);
+        $best_seller = $products->where('best_sellers', 1)->take(10);
+        // dd($shop_by_prices);
         return view('frontend.index',compact('new_arrivals','shop_by_reels','best_seller','categories','shop_by_age','call_to_actions','shop_by_prices'));
     }
     public function searchList(Request $request)
@@ -77,21 +78,138 @@ class HomeController extends Controller
         return view('frontend.product.search_product',compact('user','category','subcategory','product','product_count'));
     }
     
+    // public function search(Request $request)
+    // {
+    //     $user = Auth::user();
+
+    //     $categories = ProductCategory::where('status', 1)->latest()->get();
+    //     $subcategories = ProductSubCategory::where('status', 1)->latest()->get();
+
+    //     // Database overall Min and Max
+    //     $min_price = Product::where('status', 1)->min('offer_price');
+    //     $max_price = Product::where('status', 1)->max('offer_price');
+
+    //     $shop_by_price_id = $request->shop_by_price_id ?? null;
+
+    //     if (!empty($shop_by_price_id)) {
+    //         $shopPriceObj = \App\Models\ShopByPrice::find($shop_by_price_id); 
+            
+    //         if ($shopPriceObj) {
+    //             $req_min_price = $request->has('req_min') ? $request->req_min : $shopPriceObj->min_price;
+    //             $req_max_price = $request->has('req_max') ? $request->req_max : $shopPriceObj->max_price;
+    //         } else {
+    //             $req_min_price = $request->req_min ?? $min_price;
+    //             $req_max_price = $request->req_max ?? $max_price;
+    //         }
+    //     } else {
+    //         $req_min_price = $request->req_min ?? $min_price;
+    //         $req_max_price = $request->req_max ?? $max_price;
+    //     }
+
+    //     $selected_categories = $request->selected_categories ?? [];
+    //     $selected_subcategories = $request->selected_subcategories ?? [];
+    //     $selected_submenus = $request->selected_submenus ?? [];
+    //     $sort_by = $request->sort_by ?? null;
+    //     $search = trim($request->search);
+
+    //     $productQuery = Product::query()->where('status', 1);
+
+    //     if (!empty($search)) {
+    //         $productQuery->where(function ($q) use ($search) {
+    //             $q->where('product_name', 'LIKE', "%{$search}%")
+    //             ->orWhere('keyword', 'LIKE', "%{$search}%");
+    //         });
+    //     }
+
+    //     if (!empty($selected_categories)) {
+    //         $productQuery->whereIn('category_id', $selected_categories);
+    //     }
+    //     if (!empty($selected_subcategories)) {
+    //         $productQuery->whereIn('subcategory', $selected_subcategories);
+    //     }
+    //     if (!empty($request->shop_by_age_id)) {
+    //         $productQuery->whereHas('shopByAges', function ($q) use ($request) {
+    //             $q->whereIn('shop_by_age_id', (array) $request->shop_by_age_id);
+    //         });
+    //     }
+
+    //     if (!empty($selected_submenus)) {
+    //         $productQuery->whereIn('sub_menu_id', $selected_submenus);
+    //     }
+
+    //     $productQuery->whereBetween('offer_price', [(float)$req_min_price, (float)$req_max_price]);
+
+    //     if ($sort_by == "low-to-high") {
+    //         $productQuery->orderBy('offer_price', 'asc');
+    //     } elseif ($sort_by == "high-to-low") {
+    //         $productQuery->orderBy('offer_price', 'desc');
+    //     } elseif ($sort_by == "new-arrival") {
+    //         $productQuery->where('new_arrival', 1);
+    //     } elseif ($sort_by == "best-selling") {
+    //         $productQuery->where('best_sellers', 1);
+    //     } elseif ($sort_by == "newest-first") {
+    //         $productQuery->latest();
+    //     } elseif ($sort_by == "a-to-z") {
+    //         $productQuery->orderBy('product_name', 'asc');
+    //     } else {
+    //         $productQuery->latest();
+    //     }
+
+    //     $products = $productQuery->paginate(12)->withQueryString();
+    //     $product_count = $products->total();
+
+    //     if ($request->ajax()) {
+    //         return response()->json([
+    //             'html' => view('frontend.product.partials.product_list', compact('products'))->render(),
+    //             'total_text' => $products->total() > 0 
+    //                 ? "Showing {$products->firstItem()}–{$products->lastItem()} of {$products->total()} Results" 
+    //                 : "Showing 0 Results"
+    //         ]);
+    //     }
+
+    //     return view('frontend.product.category', compact(
+    //         'user',
+    //         'categories',
+    //         'subcategories',
+    //         'products',
+    //         'selected_categories',
+    //         'product_count',
+    //         'min_price',
+    //         'max_price',
+    //         'req_min_price',
+    //         'req_max_price',
+    //         'search',
+    //         'sort_by',
+    //         'shop_by_price_id'
+    //     ));
+    // }
     public function search(Request $request)
     {
         $user = Auth::user();
 
-        // 🏷️ Load filter data
         $categories = ProductCategory::where('status', 1)->latest()->get();
         $subcategories = ProductSubCategory::where('status', 1)->latest()->get();
 
-        // Constant range values (absolute min/max)
-        $min_price = Product::where('status', 1)->min('offer_price');
-        $max_price = Product::where('status', 1)->max('offer_price');
+        $min_price = 0;
+        $max_price = 9999;
 
-        // Current user-selected range (req_min, req_max)
-        $req_min_price = $request->req_min ?? $min_price;
-        $req_max_price = $request->req_max ?? $max_price;
+        $shop_by_price_id = $request->shop_by_price_id ?? null;
+
+        if (!empty($shop_by_price_id) && !$request->has('req_min') && !$request->has('req_max')) {
+            $shopPriceObj = \App\Models\ShopByPrice::find($shop_by_price_id);
+            
+            if ($shopPriceObj) {
+                // Min price starts from 0 so ₹95 items are included!
+                $req_min_price = $shopPriceObj->min_price ?? 0;
+                $req_max_price = $shopPriceObj->max_price ?? 199;
+            } else {
+                $req_min_price = $min_price;
+                $req_max_price = $max_price;
+            }
+        } else {
+            $req_min_price = $request->req_min ?? $min_price;
+            $req_max_price = $request->req_max ?? $max_price;
+        }
 
         $selected_categories = $request->selected_categories ?? [];
         $selected_subcategories = $request->selected_subcategories ?? [];
@@ -99,10 +217,8 @@ class HomeController extends Controller
         $sort_by = $request->sort_by ?? null;
         $search = trim($request->search);
 
-        // 🧩 Base query
         $productQuery = Product::query()->where('status', 1);
 
-        // 🔍 Search by name or keyword
         if (!empty($search)) {
             $productQuery->where(function ($q) use ($search) {
                 $q->where('product_name', 'LIKE', "%{$search}%")
@@ -110,7 +226,6 @@ class HomeController extends Controller
             });
         }
 
-        // 🏷️ Category filter
         if (!empty($selected_categories)) {
             $productQuery->whereIn('category_id', $selected_categories);
         }
@@ -123,32 +238,40 @@ class HomeController extends Controller
             });
         }
 
-        // 🏷️ Submenu filter
         if (!empty($selected_submenus)) {
             $productQuery->whereIn('sub_menu_id', $selected_submenus);
         }
 
-        // 💰 Price filter (based on req_min, req_max)
-        $productQuery->whereBetween('offer_price', [$req_min_price, $req_max_price]);
+        $productQuery->whereRaw("CAST(offer_price AS UNSIGNED) BETWEEN ? AND ?", [(int)$req_min_price, (int)$req_max_price]);
 
-        if($sort_by == "low-to-high"){
-            $productQuery->orderBy('offer_price','asc');
+        // Sort Logics
+        if ($sort_by == "low-to-high") {
+            $productQuery->orderByRaw("CAST(offer_price AS UNSIGNED) ASC");
+        } elseif ($sort_by == "high-to-low") {
+            $productQuery->orderByRaw("CAST(offer_price AS UNSIGNED) DESC");
+        } elseif ($sort_by == "new-arrival") {
+            $productQuery->where('new_arrival', 1);
+        } elseif ($sort_by == "best-selling") {
+            $productQuery->where('best_sellers', 1);
+        } elseif ($sort_by == "newest-first") {
+            $productQuery->latest();
+        } elseif ($sort_by == "a-to-z") {
+            $productQuery->orderBy('product_name', 'asc');
+        } else {
+            $productQuery->latest();
         }
-        elseif($sort_by == "high-to-low"){
-            $productQuery->orderBy('offer_price','desc');
-        }
-        elseif($sort_by == "new-arrival"){
-            $productQuery->where('new_arrival',1);
-        }
-        elseif($sort_by == "best-selling"){
-            $productQuery->where('best_sellers',1);
-        }
-        // 📦 Fetch filtered products
-        $products = $productQuery->latest()->paginate(12)->withQueryString();
 
-
-        // 🧮 Product count
+        $products = $productQuery->paginate(12)->withQueryString();
         $product_count = $products->total();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('frontend.product.partials.product_list', compact('products'))->render(),
+                'total_text' => $products->total() > 0 
+                    ? "Showing {$products->firstItem()}–{$products->lastItem()} of {$products->total()} Results" 
+                    : "Showing 0 Results"
+            ]);
+        }
 
         return view('frontend.product.category', compact(
             'user',
@@ -157,14 +280,16 @@ class HomeController extends Controller
             'products',
             'selected_categories',
             'product_count',
-            'min_price',        // constant min
-            'max_price',        // constant max
-            'req_min_price',    // current selected min
-            'req_max_price',    // current selected max
+            'min_price',
+            'max_price',
+            'req_min_price',
+            'req_max_price',
             'search',
-            'sort_by'
+            'sort_by',
+            'shop_by_price_id'
         ));
     }
+
 
     public function subCategoryList($id,Request $request)
     {

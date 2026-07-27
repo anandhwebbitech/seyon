@@ -377,10 +377,10 @@
                         </div>
                         <h3 class="mb-4 fw-bold">Billing details</h3>
                         <div class="row mb-3">
-                            <div class="col-md-6">
+                            <div class="col-12">
                                 <label for="courierPreference" class="form-label">Courier Preference</label>
-                                <div class="d-flex">
-                                    <div class="courier-option ">
+                                <div class="row">
+                                    <div class="courier-option m-0 col-6 col-md-4 ">
                                         <input type="radio" id="stCourier" name="courier_name" value="ST Courier"
                                             class="courier-radio" @checked(old('courier_name') == 'ST Courier')>
                                         <label for="stCourier">
@@ -388,7 +388,7 @@
                                                 class="courier-img">
                                         </label>
                                     </div>
-                                    <div class="courier-option">
+                                    <div class="courier-option m-0 col-6 col-md-4">
                                         <input type="radio" id="edcCourier" name="courier_name" value="DTDC"
                                             class="courier-radio" @checked(old('courier_name') == 'DTDC')>
                                         <label for="edcCourier">
@@ -396,7 +396,7 @@
                                                 class="courier-img">
                                         </label>
                                     </div>
-                                    <div class="courier-option">
+                                    <div class="courier-option m-0 col-6 col-md-4">
                                         <input type="radio" id="professionalCourier" name="courier_name"
                                             value="Professional Courier" class="courier-radio"
                                             @checked(old('courier_name') == 'Professional Courier')>
@@ -405,9 +405,7 @@
                                                 class="courier-img">
                                         </label>
                                     </div>
-                                </div>
-                                <div class="d-flex mt-2">
-                                    <div class="courier-option ">
+                                    <div class="courier-option m-0 col-6 col-md-4 ">
                                         <input type="radio" id="Delhivery" name="courier_name" value="Delhivery"
                                             class="courier-radio" @checked(old('courier_name') == 'Delhivery')>
                                         <label for="Delhivery">
@@ -415,7 +413,7 @@
                                                 class="courier-img">
                                         </label>
                                     </div>
-                                    <div class="courier-option">
+                                    <div class="courier-option m-0 col-6 col-md-4">
                                         <input type="radio" id="indiaPost" name="courier_name" value="India Post"
                                             class="courier-radio" @checked(old('courier_name') == 'India Post')>
                                         <label for="indiaPost">
@@ -423,8 +421,7 @@
                                                 class="courier-img">
                                         </label>
                                     </div>
-
-                                </div>
+                                </div> 
                                 <div id="courier_name-error" class="text-danger courier-error"></div>
                             </div>
                         </div>
@@ -928,45 +925,54 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
 
     <script>
-
         function animateCounter(id, start, end, duration, milestones) {
             let obj = document.getElementById(id);
+            if (!obj) return; // 🛡️ Fix 1: Stop if counter element doesn't exist
+
             let current = start;
             let range = end - start;
+            if (range <= 0) {
+                obj.textContent = end;
+                return;
+            }
+
             let increment = end > start ? 1 : -1;
             let stepTime = Math.abs(Math.floor(duration / range));
-
-            // Track popup triggers
             let triggered = {};
 
             let timer = setInterval(() => {
-
                 current += increment;
-                obj.textContent = current;
+                
+                // 🛡️ Fix 2: Safe textContent assignment
+                if (obj) obj.textContent = current;
 
-                // Dynamic progress bar (max milestone)
-                let maxMilestone = Math.max(...milestones.map(m => m.amount));
-                let percentage = (current / maxMilestone) * 100;
-                document.getElementById("progressBar").style.width = percentage + "%";
+                // Dynamic progress bar
+                let progressBar = document.getElementById("progressBar");
+                if (progressBar && milestones && milestones.length > 0) {
+                    let maxMilestone = Math.max(...milestones.map(m => m.amount));
+                    let percentage = (current / maxMilestone) * 100;
+                    progressBar.style.width = Math.min(percentage, 100) + "%";
+                }
 
                 // Loop through milestones dynamically
-                milestones.forEach((m, index) => {
-                    if (current === m.amount && !triggered[m.amount]) {
+                if (milestones && Array.isArray(milestones)) {
+                    milestones.forEach((m, index) => {
+                        if (current === m.amount && !triggered[m.amount]) {
+                            triggered[m.amount] = true;
 
-                        triggered[m.amount] = true;
-
-                        // Dynamic popup text
-                        document.getElementById("successPopup").innerHTML =
-                            `🎉 Reached ${m.name}! 🎊`;
-
-                        showSuccessPopup();
-                        launchConfetti();
-                        // Confetti only for LAST milestone
-                        if (index === milestones.length - 1) {
+                            let successPopup = document.getElementById("successPopup");
+                            if (successPopup) {
+                                successPopup.innerHTML = `🎉 Reached ${m.name}! 🎊`;
+                                showSuccessPopup();
+                            }
+                            
                             launchConfetti();
+                            if (index === milestones.length - 1) {
+                                launchConfetti();
+                            }
                         }
-                    }
-                });
+                    });
+                }
 
                 if (current === end) clearInterval(timer);
 
@@ -975,22 +981,22 @@
 
         function showSuccessPopup() {
             const popup = document.getElementById("successPopup");
-            popup.classList.add("show");
-
-            setTimeout(() => popup.classList.remove("show"), 3000);
+            if (popup) { // 🛡️ Fix 3: Null check added
+                popup.classList.add("show");
+                setTimeout(() => popup.classList.remove("show"), 3000);
+            }
         }
 
         function launchConfetti() {
             const section = document.querySelector(".milestone-box-new");
+            if (!section) return; // 🛡️ Fix 4: Stop if confetti container doesn't exist
 
             for (let i = 0; i < 80; i++) {
                 let confetti = document.createElement("div");
                 confetti.classList.add("confetti");
 
                 confetti.style.left = Math.random() * 100 + "vw";
-                confetti.style.backgroundColor =
-                    "hsl(" + Math.random() * 360 + ", 100%, 50%)";
-
+                confetti.style.backgroundColor = "hsl(" + Math.random() * 360 + ", 100%, 50%)";
                 confetti.style.animationDuration = Math.random() * 2 + 2 + "s";
 
                 section.appendChild(confetti);
@@ -1000,13 +1006,19 @@
         }
 
         window.onload = () => {
-            animateCounter(
-                "counter",
-                0,
-                {{ $sub_total }},
-                3000,
-                @json($milestones)  
-            );
+            let subTotal = parseInt("{{ $sub_total ?? 0 }}") || 0;
+            let milestonesData = @json($milestones ?? []);
+
+            // Only run counter if target element exists in HTML
+            if (document.getElementById("counter") && subTotal > 0) {
+                animateCounter(
+                    "counter",
+                    0,
+                    subTotal,
+                    3000,
+                    milestonesData
+                );
+            }
         };
 
         $('#place-order').validate({
