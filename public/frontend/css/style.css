@@ -730,6 +730,7 @@ p {
     width: 250px;
     border-radius: 10px;
     border: 1.5px solid #d7d7d7 !important;
+    height: 100% !important;
 }
 
 .product-card1:hover {
@@ -887,6 +888,7 @@ p {
     align-items: center;
     justify-content: center;
     overflow: visible;
+    flex-shrink: 0;
 }
 
 /* Text */
@@ -948,6 +950,7 @@ p {
     color: white;
     font-size: 18px;
     line-height: inherit;
+    margin: 0;
 }
 
 .age-thumb a {
@@ -1609,7 +1612,7 @@ button.btn.arrow-circle.btn-sm.px-3 {
 .action-buttons {
     display: flex;
     gap: 15px;
-    margin: 20px 0;
+    /* margin: 20px 0; */
     flex-wrap: nowrap;
 }
 
@@ -2315,6 +2318,33 @@ input[type=number] {
     border-color: #dc35455c;
 }
 
+@media (max-width: 376px) {
+    .age-section {
+        padding: 12px;
+    }
+
+    .age-thumb {
+        width: 128px;
+        height: 128px;
+    }
+
+    .age-thumb::before,
+    .age-thumb::after {
+        width: 140px;
+        height: 140px;
+    }
+
+    .age-thumb a p {
+        font-size: 14px;
+    }
+
+    .mobile-search {
+        width: 80%;
+    }
+}
+
+
+
 @media (max-width: 768px) {
     .shop-by-price .price-card {
         width: 260px;
@@ -2344,6 +2374,11 @@ input[type=number] {
 
     .col-col {
         flex-direction: column;
+    }
+
+
+    .main-content {
+        padding: 0px !important;
     }
 }
 
@@ -2663,7 +2698,7 @@ input[type=number] {
     position: fixed;
     top: 0;
     right: 0;
-    height: 100vh;
+    height: 100%;
     width: 400px;
     background: white;
     box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
@@ -2674,6 +2709,15 @@ input[type=number] {
 
 .cart-modal.show {
     transform: translateX(0);
+}
+
+
+@media (max-width: 425px) {
+    .cart-modal {
+        width: 100% !important;
+        height: 100%;
+
+    }
 }
 
 .cart-header {
@@ -3241,7 +3285,7 @@ button.btn.btn-primary.show-cart-btn i {
     }
 
     .product-card1 img {
-        width: 90%;
+        width: 100%;
     }
 
     .cart-header {
@@ -4341,7 +4385,7 @@ hr {
 
 /* check out */
 .address-card {
-    max-width: 560px;
+    max-width: 100% !important;
     /* margin: 0 auto; */
     background: white;
     border-radius: 12px;
@@ -4448,7 +4492,7 @@ hr {
 .action-buttons {
     display: flex;
     gap: 16px;
-    margin-top: 32px;
+    /* margin-top: 32px; */
 }
 
 .btn-edit {
@@ -4828,7 +4872,7 @@ hr {
 
 .product-card1 .card-body {
     background: white;
-    
+
 }
 
 /* @media (max-width: 992px) {
@@ -4918,8 +4962,8 @@ hr {
 }
 
 .product-container .image-section {
-    height: 500px;
-    width: 500px;
+    height: auto;
+    width: 100%;
 }
 
 @media screen and (max-width: 969px) {

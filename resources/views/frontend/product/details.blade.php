@@ -268,7 +268,7 @@
 
                         <input type="hidden" name="product_id" value="{{ $productDetails->id }}">
 
-                        <div class="d-flex justify-content-between col-col">
+                        <div class="d-flex justify-content-between col-col flex-wrap">
                             <!-- Quantity Section -->
                             <div class="quantity-section">
                                 <div class="quantity-control">
@@ -502,12 +502,12 @@
                         </div>
 
                         <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
-                            <p>Customer reviews will be displayed here. This section would typically contain user ratings,
+                            <!-- <p>Customer reviews will be displayed here. This section would typically contain user ratings,
                                 comments, and feedback about the product.</p>
 
                             <p>You can add review components, star ratings, user avatars, and review text in this section.
                                 The content structure would be similar to the description tab but focused on customer
-                                feedback.</p>
+                                feedback.</p> -->
                         </div>
                     </div>
                 </div>

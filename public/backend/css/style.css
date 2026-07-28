@@ -3331,7 +3331,8 @@ textarea.form-control-lg {
     padding-right: 0;
     padding-left: 0; }
   .navbar-nav .dropdown-menu {
-    position: static; }
+    position: static;
+      overflow: hidden !important; }
 
 .navbar-text {
   padding-top: 0.5rem;

@@ -525,7 +525,7 @@
                         <div class="row gy-4 mt-3">
 
                             @foreach ($userAddress as $address)
-                                <div class="col-lg-6 col-md-12">
+                                <div class="col-md-12">
                                     <div class="address-card">
                                         <div class="row gy-4 align-items-center">
                                             <div class="col-6">

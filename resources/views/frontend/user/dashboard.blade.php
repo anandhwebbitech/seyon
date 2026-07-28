@@ -2,7 +2,7 @@
 
 @section('content')
     <!-- Profile Section -->
-    <div class="profile-detail">
+    <div class="profile-detail" style="margin-top: 30px;">
         <div class="container">
             <h5 class="main-title">My Profile</h5>
             <div class="row gy-4 gx-2 mt-3">
