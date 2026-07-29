@@ -46,7 +46,7 @@
 
         .search-btn {
             padding: 0.6rem 1.2rem;
-        } 
+        }
     }
 
     @media (max-width: 576px) {
@@ -70,6 +70,13 @@
     .col {
         padding: 10px !important;
     }
+
+    @media (max-width: 375px) {
+        .login-after {
+            flex-wrap: wrap;
+            gap: 10px !important;
+        }
+    }
 </style>
 
 <!-- Top welcome bar -->
@@ -92,7 +99,7 @@
             </div>
 
             <!-- Search Bar Section -->
-            <div class="col-12 col-lg-6 order-3 order-lg-2 mt-lg-0 desk-search">
+            <div class="col-12 col-lg-5 order-3 order-lg-2 mt-lg-0 desk-search">
                 <form action="{{ route('category.list') }}" method="GET" class="search-form">
                     <div class="input-group">
                         <input type="text" name="search" class="form-control search-input"
@@ -107,93 +114,93 @@
 
             <!-- Actions -->
             @auth
+            @if (auth()->user()->user_type === 'user')
+            <div class="col-8 col-md-8 col-lg-5 d-flex justify-content-end align-items-center gap-3 order-2 order-lg-3 header-actions login-after">
+                <!-- Cart & User Section -->
+                @php
+                if (auth()->check() && auth()->user()->cartItems) {
+                $cartItems = auth()->user()->cartItems;
+                $subtotal = $cartItems->sum(fn($item) => $item->price * $item->quantity);
+                } else {
+                $cartItems = collect([]);
+                $subtotal = 0;
+                }
+                // Wishlist
+                if (auth()->check() && auth()->user()->wishlistItems) {
+                $wishlistItems = auth()->user()->wishlistItems;
+                } else {
+                $wishlistItems = collect([]);
+                }
+                @endphp
+
+                <!-- Wishlist Button -->
+                <a href="{{ route('show.wishlist.list') }}" class="d-inline-flex align-items-center">
+                    <i class="bi bi-heart me-1"></i>
+                    <span class="d-none d-lg-inline wishlist_count">({{ $wishlistItems->count() }})</span>
+                </a>
+
+                <span class="divider d-none d-lg-inline-block" aria-hidden="true"></span>
+
+                <!-- Button trigger modal -->
+                <button class="btn btn-primary show-cart-btn d-inline-flex align-items-center" id="cart">
+                    <i class="bi bi-cart me-1" aria-hidden="true"></i>
+                    <span class="d-none d-lg-inline">Cart ({{ $cartItems->count() }})</span>
+                </button>
+                <span class="divider d-none d-lg-inline-block" aria-hidden="true"></span>
+
                 @if (auth()->user()->user_type === 'user')
-                    <div class="col-8 col-md-10 col-lg-4 d-flex justify-content-end align-items-center gap-3 order-2 order-lg-3 header-actions">
-                        <!-- Cart & User Section -->
-                        @php
-                            if (auth()->check() && auth()->user()->cartItems) {
-                                $cartItems = auth()->user()->cartItems;
-                                $subtotal = $cartItems->sum(fn($item) => $item->price * $item->quantity);
-                            } else {
-                                $cartItems = collect([]);
-                                $subtotal = 0;
-                            }
-                            // Wishlist
-                            if (auth()->check() && auth()->user()->wishlistItems) {
-                                $wishlistItems = auth()->user()->wishlistItems;
-                            } else {
-                                $wishlistItems = collect([]);
-                            }
-                        @endphp
-                        
-                        <!-- Wishlist Button -->
-                        <a href="{{ route('show.wishlist.list') }}" class="d-inline-flex align-items-center">
-                            <i class="bi bi-heart me-1"></i>
-                            <span class="d-none d-lg-inline wishlist_count">({{ $wishlistItems->count() }})</span>
-                        </a>
-
-                        <span class="divider d-none d-lg-inline-block" aria-hidden="true"></span>
-                        
-                        <!-- Button trigger modal -->
-                        <button class="btn btn-primary show-cart-btn d-inline-flex align-items-center" id="cart">
-                            <i class="bi bi-cart me-1" aria-hidden="true"></i>
-                            <span class="d-none d-lg-inline">Cart ({{ $cartItems->count() }})</span>
-                        </button>
-                        <span class="divider d-none d-lg-inline-block" aria-hidden="true"></span>
-                        
-                        @if (auth()->user()->user_type === 'user')
-                            <a href="{{ route('user.dashboard') }}" class="d-flex align-items-center text-decoration-none">
-                                <i class="fa-regular fa-user fs-5" aria-hidden="true"></i>
-                                <div class="d-flex flex-column lh-sm">
-                                    <span class="text-primary fw-semibold">{{ auth()->user()->name }}</span>
-                                </div>
-                            </a>
-                        @endif
-
-                        <!-- Backdrop -->
-                        <div class="backdrop" id="backdrop" onclick="closeCart()"></div>
-
-                        <meta name="csrf-token" content="{{ csrf_token() }}">
-                        
-                        <!-- Cart Modal -->
-                        <div class="cart-modal" id="cartModal">
-                            <div class="cart-header">
-                                <h5>Cart - <span id="cart-count"></span></h5>
-                                <button class="close-btn">✕</button>
-                            </div>
-
-                            <div class="cart-body p-2"></div>
-
-                            <div class="cart-footer">
-                                <div class="subtotal">
-                                    <span>Subtotal</span>
-                                    <span id="subtotalAmount">₹ 0</span>
-                                </div>
-
-                                <a class="checkout-btn" style="color: #fff"
-                                    href="{{ route('product.proceed_to_checkout') }}">Checkout</a>
-                                <a class="view-cart-btn" href="{{ route('show.cart.table') }}">View Cart</a>
-                            </div>
-                        </div>
+                <a href="{{ route('user.dashboard') }}" class="d-flex align-items-center text-decoration-none">
+                    <i class="fa-regular fa-user fs-5" aria-hidden="true"></i>
+                    <div class="d-flex flex-column lh-sm">
+                        <span class="text-primary fw-semibold">{{ auth()->user()->name }}</span>
                     </div>
-                @else
-                    <div class="col-8 col-md-10 col-lg-4 d-flex justify-content-end align-items-center gap-3 order-2 order-lg-3 header-actions">
-                        <a href="{{ route('user.login') }}" class="d-inline-flex align-items-center">
-                            <i class="fa-regular fa-user" aria-hidden="true"></i>
-                            <span class="text-label d-none d-lg-inline ms-2">Sign Up/Sign In</span>
-                        </a>
-                    </div>
+                </a>
                 @endif
+
+                <!-- Backdrop -->
+                <div class="backdrop" id="backdrop" onclick="closeCart()"></div>
+
+                <meta name="csrf-token" content="{{ csrf_token() }}">
+
+                <!-- Cart Modal -->
+                <div class="cart-modal" id="cartModal">
+                    <div class="cart-header">
+                        <h5>Cart - <span id="cart-count"></span></h5>
+                        <button class="close-btn">✕</button>
+                    </div>
+
+                    <div class="cart-body p-2"></div>
+
+                    <div class="cart-footer">
+                        <div class="subtotal">
+                            <span>Subtotal</span>
+                            <span id="subtotalAmount">₹ 0</span>
+                        </div>
+
+                        <a class="checkout-btn" style="color: #fff"
+                            href="{{ route('product.proceed_to_checkout') }}">Checkout</a>
+                        <a class="view-cart-btn" href="{{ route('show.cart.table') }}">View Cart</a>
+                    </div>
+                </div>
+            </div>
+            @else
+            <div class="col-8 col-md-8 col-lg-5 d-flex justify-content-end align-items-center gap-3 order-2 order-lg-3 header-actions">
+                <a href="{{ route('user.login') }}" class="d-inline-flex align-items-center">
+                    <i class="fa-regular fa-user" aria-hidden="true"></i>
+                    <span class="text-label d-none d-lg-inline ms-2">Sign Up/Sign In</span>
+                </a>
+            </div>
+            @endif
             @endauth
 
             @guest
-                <!-- Show login/signup button if user is not logged in -->
-                <div class="signin col-8 col-md-8 col-lg-4 d-flex justify-content-end align-items-center gap-3 order-2 order-lg-3 header-actions">
-                    <a href="{{ route('user.login') }}" class="d-inline-flex align-items-center hero-cta m-0">
-                        <i class="fa-regular fa-user" aria-hidden="true"></i>
-                        <span class="text-label d-none d-lg-inline ms-2">Sign In</span>
-                    </a>
-                </div>
+            <!-- Show login/signup button if user is not logged in -->
+            <div class="signin col-8 col-md-8 col-lg-5 d-flex justify-content-end align-items-center gap-3 order-2 order-lg-3 header-actions">
+                <a href="{{ route('user.login') }}" class="d-inline-flex align-items-center hero-cta m-0">
+                    <i class="fa-regular fa-user" aria-hidden="true"></i>
+                    <span class="text-label d-none d-lg-inline ms-2">Sign In</span>
+                </a>
+            </div>
             @endguest
         </div>
     </div>
@@ -223,53 +230,53 @@
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     @php
-                        $categories = \App\Models\ProductCategory::with('subCategories')->where('status', 1)->get();
+                    $categories = \App\Models\ProductCategory::with('subCategories')->where('status', 1)->get();
                     @endphp
                     <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Home</a></li>
-                    
-                    @foreach ($categories as $category)
-                        <li class="nav-item dropdown">
-                            <div class="d-flex align-items-center w-100">
-                                <a class="nav-link flex-grow-1"
-                                    href="{{ route('category.list') }}?selected_categories[]={{ $category->id }}">
-                                    {{ $category->name }}
-                                </a>
-                                @if ($category->subCategories->isNotEmpty())
-                                    <span class="mobile-toggle-btn d-lg-none px-3 py-2 text-dark"><i class="fa-solid fa-chevron-down text-white"></i></span>
-                                @endif
-                            </div>
 
+                    @foreach ($categories as $category)
+                    <li class="nav-item dropdown">
+                        <div class="d-flex align-items-center w-100">
+                            <a class="nav-link flex-grow-1"
+                                href="{{ route('category.list') }}?selected_categories[]={{ $category->id }}">
+                                {{ $category->name }}
+                            </a>
                             @if ($category->subCategories->isNotEmpty())
+                            <span class="mobile-toggle-btn d-lg-none px-3 py-2 text-dark"><i class="fa-solid fa-chevron-down text-white"></i></span>
+                            @endif
+                        </div>
+
+                        @if ($category->subCategories->isNotEmpty())
+                        <ul class="dropdown-menu">
+                            @foreach ($category->subCategories as $sub)
+                            <li class="@if ($sub->submenus->isNotEmpty()) dropdown-submenu @endif">
+                                <div class="d-flex align-items-center w-100">
+                                    <a class="dropdown-item dropdown-item-styled flex-grow-1"
+                                        href="{{ route('category.list') }}?selected_subcategories[]={{ $sub->id }}">
+                                        <span>{{ $sub->name }}</span>
+                                    </a>
+                                    @if ($sub->submenus->isNotEmpty())
+                                    <span class="mobile-toggle-btn d-lg-none px-3 py-2 text-dark"><i class="fa-solid fa-chevron-down"></i></span>
+                                    @endif
+                                </div>
+
+                                @if ($sub->submenus->isNotEmpty())
                                 <ul class="dropdown-menu">
-                                    @foreach ($category->subCategories as $sub)
-                                        <li class="@if ($sub->submenus->isNotEmpty()) dropdown-submenu @endif">
-                                            <div class="d-flex align-items-center w-100">
-                                                <a class="dropdown-item dropdown-item-styled flex-grow-1"
-                                                    href="{{ route('category.list') }}?selected_subcategories[]={{ $sub->id }}">
-                                                    <span>{{ $sub->name }}</span>
-                                                </a>
-                                                @if ($sub->submenus->isNotEmpty())
-                                                    <span class="mobile-toggle-btn d-lg-none px-3 py-2 text-dark"><i class="fa-solid fa-chevron-down"></i></span>
-                                                @endif
-                                            </div>
-                                            
-                                            @if ($sub->submenus->isNotEmpty())
-                                                <ul class="dropdown-menu">
-                                                    @foreach ($sub->submenus as $menu)
-                                                        <li>
-                                                            <a class="dropdown-item"
-                                                                href="{{ route('category.list') }}?selected_submenus[]={{ $menu->id }}">
-                                                                {{ $menu->name }}
-                                                            </a>
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            @endif
-                                        </li>
+                                    @foreach ($sub->submenus as $menu)
+                                    <li>
+                                        <a class="dropdown-item"
+                                            href="{{ route('category.list') }}?selected_submenus[]={{ $menu->id }}">
+                                            {{ $menu->name }}
+                                        </a>
+                                    </li>
                                     @endforeach
                                 </ul>
-                            @endif
-                        </li>
+                                @endif
+                            </li>
+                            @endforeach
+                        </ul>
+                        @endif
+                    </li>
                     @endforeach
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('contact') }}">Contact Us</a>
@@ -297,6 +304,12 @@
         padding: 10px 20px !important;
     }
 
+    @media (max-width: 1025px) {
+        .nav-link {
+            padding: 10px 0px !important;
+        }
+    }
+
     .nav-link:hover {
         color: #ff4757;
     }
@@ -322,7 +335,7 @@
 
     /* Desktop-only hover logic */
     @media (min-width: 992px) {
-        .nav-item.dropdown:hover > .dropdown-menu {
+        .nav-item.dropdown:hover>.dropdown-menu {
             display: block;
             opacity: 1;
             transform: translateY(0);
@@ -330,25 +343,26 @@
             animation: slideDown 0.3s ease forwards;
         }
 
-        .dropdown-submenu:hover > .dropdown-menu {
+        .dropdown-submenu:hover>.dropdown-menu {
             display: block;
             opacity: 1;
             transform: translateY(0);
         }
 
-        .nav-item.dropdown:hover > .nav-link::after {
+        .nav-item.dropdown:hover>.nav-link::after {
             transform: rotate(180deg);
         }
-        
+
         /* Desktop Caret Styling */
-        .dropdown-submenu > .dropdown-item-styled::after {
+        .dropdown-submenu>.dropdown-item-styled::after {
             content: "❯";
             float: right;
             margin-left: auto;
             font-size: 14px;
             transition: transform 0.3s ease;
         }
-        .dropdown-submenu:hover > .dropdown-item-styled::after {
+
+        .dropdown-submenu:hover>.dropdown-item-styled::after {
             transform: translateX(5px);
         }
     }
@@ -381,7 +395,8 @@
     .dropdown-submenu {
         position: relative;
     }
-    .dropdown-submenu > .dropdown-menu {
+
+    .dropdown-submenu>.dropdown-menu {
         top: 0;
         left: 100%;
         margin-top: 0;
@@ -390,8 +405,15 @@
 
     /* Animation for dropdown appearance */
     @keyframes slideDown {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     /* Responsive Submenu Design for Mobile */
@@ -401,16 +423,16 @@
             box-shadow: none;
             border-left: 3px solid #ff4757;
             margin-left: 15px;
-            display: none; 
-            
+            display: none;
+
             /* CRITICAL FIX: Disable all CSS transitions to prevent stuttering/lag */
-            opacity: 1 !important; 
-            transform: none !important; 
+            opacity: 1 !important;
+            transform: none !important;
             transition: none !important;
             animation: none !important;
         }
 
-        .dropdown-submenu > .dropdown-menu {
+        .dropdown-submenu>.dropdown-menu {
             position: static;
             margin-left: 20px;
         }
@@ -429,13 +451,13 @@
     const increaseCartRoute = "{{ route('increase.cart.qty', '') }}";
     const decreaseCartRoute = "{{ route('decrease.cart.qty', '') }}";
     const removeCartRoute = "{{ route('cart.remove') }}";
-    
+
     $(document).ready(function() {
         $('#cart').on('click', function() {
             $('#cartModal').addClass('show');
-            if(typeof cartList === 'function') cartList();
+            if (typeof cartList === 'function') cartList();
         });
-        
+
         $('.close-btn').on('click', function() {
             $('#cartModal').removeClass('show');
         });
@@ -451,10 +473,10 @@
         $('.mobile-toggle-btn').on('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            
+
             let $icon = $(this).find('i');
             let $menu = $(this).closest('li').children('.dropdown-menu');
-            
+
             $menu.stop(true, true).slideToggle(300);
             $icon.toggleClass('fa-chevron-down fa-chevron-up');
         });

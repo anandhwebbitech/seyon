@@ -5,6 +5,7 @@
             width: 100%;
             position: relative;
             overflow: hidden;
+            height: 100% !important;
         }
 
         .image-box {
@@ -546,7 +547,7 @@
                 <div class="container">
                     <div class="row justify-content-center g-5">
                         @foreach ($shop_by_age as $shop)
-                            <div class="col-6 col-md-4 col-lg-2 age-card d-flex justify-content-center">
+                            <div class="col-6 col-md-4 col-lg-3 age-card d-flex justify-content-center">
                                 <div class="age-thumb">
                                     <a href="{{ route('category.list') }}?shop_by_age_id={{ $shop->id }}">
                                         {{-- <img src="{{ asset($shop->image) }}" alt="{{ $shop->title ?? '' }}" class="img-fluid rounded shadow-sm"> --}}
@@ -683,142 +684,41 @@
     </div>
     {{-- shop by reel --}}
 
-    <section class="reels-section container py-4" id="reelsCarouselV2" aria-label="Shop Our Reels">
-        <div class="reels-header d-flex justify-content-between align-items-center mb-3 gap-3">
-            <h2 class="m-0">Shop Our Reels</h2>
-
-            <!-- Controls aligned with the header -->
-            <div class="reels-controls d-flex align-items-center gap-2">
-                <button class="btn arrow-circle btn-sm px-3" type="button" data-bs-target="#reelsCarousel"
-                    data-bs-slide="prev" aria-controls="reelsCarousel" aria-label="Previous slide">
-                    <i class="fa-solid fa-arrow-left"></i>
-                </button>
-                <button class="btn arrow-circle btn-sm px-3" type="button" data-bs-target="#reelsCarousel"
-                    data-bs-slide="next" aria-controls="reelsCarousel" aria-label="Next slide">
-                    <i class="fa-solid fa-arrow-right"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Bootstrap carousel -->
-        <div id="reelsCarousel" class="carousel slide" data-bs-wrap="true" data-bs-ride="carousel"
-            data-bs-interval="4500">
-
-            <div class="carousel-inner">
-
-                <!-- Slide 1 -->
-                <div class="carousel-item active">
-                    <div class="row g-3">
-                        @foreach ($shop_by_reels as $reel)
-                            @php
-                                // Normal Instagram URL-a Embed URL-a convert panrom
-                                $embed_url = strtok($reel->url, '?'); // Query parameters ('?utm_source=...') ah remove panroam
-                                $embed_url = rtrim($embed_url, '/') . '/embed'; // Ennding-la /embed add panroam
-                            @endphp
-
-                            <div class="reels-card">
-                                <article class="reel-card text-center h-100">
-                                    {{-- Reels kku vertical aspect ratio 9x16 thaan correct-a irukkum --}}
-                                    <div class="reel-media ratio ratio-9x16"> 
-                                        <iframe src="{{ $embed_url }}" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
-
-                                        <!-- Overlay -->
-                                        <div class="overlay">
-                                            <a href="{{ $reel->url ?? '#' }}" target="_blank" class="icon"><i class="fab fa-instagram"></i></a>
-                                            <a href="{{ $reel->redirect_url ?? '#' }}" class="icon"><i class="fas fa-shopping-cart"></i></a>
-                                        </div>
-                                    </div>
-                                    <p class="reel-title h6 mt-1 mb-3">{{ $reel->title ?? '' }}</p>
-                                </article>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-
-                <!-- Slide 2 -->
-                {{-- <div class="carousel-item">
-                    <div class="row g-3">
-                        <!-- Card 6 -->
-                        <div class="reels-card">
-                            <article class="reel-card text-center h-100">
-                                <div class="reel-media ratio ratio-16x9">
-                                    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-
-                                    <!-- Overlay -->
-                                    <div class="overlay">
-                                        <a href="#" class="icon"><i class="fab fa-instagram"></i></a>
-                                        <a href="#" class="icon"><i class="fas fa-shopping-cart"></i></a>
-                                    </div>
-                                </div>
-                                <p class="reel-title h6 mt-2 mb-3">New Arrival Product...</p>
-                            </article>
-                        </div>
-                        <!-- Card 7 -->
-                        <div class="reels-card">
-                            <article class="reel-card text-center h-100">
-                                <div class="reel-media ratio ratio-16x9">
-                                    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-
-                                    <!-- Overlay -->
-                                    <div class="overlay">
-                                        <a href="#" class="icon"><i class="fab fa-instagram"></i></a>
-                                        <a href="#" class="icon"><i class="fas fa-shopping-cart"></i></a>
-                                    </div>
-                                </div>
-                                <p class="reel-title h6 mt-2 mb-3">Bestseller Item Name...</p>
-                            </article>
-                        </div>
-                        <!-- Card 8 -->
-                        <div class="reels-card">
-                            <article class="reel-card text-center h-100">
-                                <div class="reel-media ratio ratio-16x9">
-                                    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-
-                                    <!-- Overlay -->
-                                    <div class="overlay">
-                                        <a href="#" class="icon"><i class="fab fa-instagram"></i></a>
-                                        <a href="#" class="icon"><i class="fas fa-shopping-cart"></i></a>
-                                    </div>
-                                </div>
-                                <p class="reel-title h6 mt-2 mb-3">Top Rated Product...</p>
-                            </article>
-                        </div>
-                        <!-- Card 9 -->
-                        <div class="reels-card">
-                            <article class="reel-card text-center h-100">
-                                <div class="reel-media ratio ratio-16x9">
-                                    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-
-                                    <!-- Overlay -->
-                                    <div class="overlay">
-                                        <a href="#" class="icon"><i class="fab fa-instagram"></i></a>
-                                        <a href="#" class="icon"><i class="fas fa-shopping-cart"></i></a>
-                                    </div>
-                                </div>
-                                <p class="reel-title h6 mt-2 mb-3">Customer Favorite...</p>
-                            </article>
-                        </div>
-                        <!-- Card 10 -->
-                        <div class="reels-card">
-                            <article class="reel-card text-center h-100">
-                                <div class="reel-media ratio ratio-16x9">
-                                    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-
-                                    <!-- Overlay -->
-                                    <div class="overlay">
-                                        <a href="#" class="icon"><i class="fab fa-instagram"></i></a>
-                                        <a href="#" class="icon"><i class="fas fa-shopping-cart"></i></a>
-                                    </div>
-                                </div>
-                                <p class="reel-title h6 mt-2 mb-3">Limited Edition Item...</p>
-                            </article>
-                        </div>
-                    </div>
-                </div> --}}
-            </div>
-        </div>
+    <section class="container py-4">
+          <div class="elfsight-app-03d717df-86a7-46e8-9926-3ea8612a48b6" data-elfsight-app-lazy></div>
     </section>
     {{-- shop by reel --}}
+ 
+
+    <style>
+        /* Hide Elfsight branding */
+        a[href*="elfsight.com"] {
+            display: none !important;
+        }
+
+        /* Alternative */
+        .eapps-instagram-feed-posts-grid + a,
+        .eapps-widget-toolbar,
+        .eapps-link {
+            display: none !important;
+        }
+    </style>
+
+    <!-- Elfsight Instagram Feed | Untitled Instagram Feed -->
+    <script src="https://elfsightcdn.com/platform.js" async></script>
+   
+
+    <script>
+        function removeElfsightBranding() {
+        document.querySelectorAll('a[href*="elfsight.com"]').forEach(el => {
+            el.remove();
+        });
+    }
+
+    removeElfsightBranding();
+
+    setInterval(removeElfsightBranding, 500);
+    </script>
 
     <section class="banner-section-1">
         <div class="container">
@@ -832,7 +732,7 @@
                 <!-- Right Side: Text and Button -->
                 <div class="col-6 content">
                     <h2>Every color for every kid.</h2>
-                    <button class="shop-btn">SHOP NOW</button>
+                    <a href="{{ route('category.list') }}" class="shop-btn" style="text-decoration: none;">SHOP NOW</a>
                 </div>
             </div>
         </div>
