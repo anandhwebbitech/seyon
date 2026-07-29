@@ -47,13 +47,19 @@
                                     <span class="text-muted text-decoration-line-through">₹ {{ $wishlist->product->orginal_rate ?? ''}}</span>
                                 </div>
                             </div>
-                            <div class="d-flex justify-content-end mb-2">
-                                {{-- <a class="wish-but" href="#"><i class="bi bi-cart"></i>Add To Cart</a> --}}
-                                <a class="wish-but wishlist-remove" data-product-id="{{ $wishlist->product->id }}" 
-                                    data-url="{{ route('remove.wishlist', $wishlist->product->id ) }}" 
-                                    data-login="{{ route('user.login') }}" href="javascript:void(0);"><i class="bi bi-trash"></i>Remove
+                          
+                            <div class="d-flex justify-content-between align-items-center p-2 mt-auto">
+                                {{-- Add to Cart Button --}}
+                                <a class="wish-but btn btn-sm btn-primary d-flex align-items-center gap-1" 
+                                href="{{ route('addto.cart', $wishlist->product->id) }}">
+                                <i class="bi bi-cart"></i> 
                                 </a>
-                                                                
+
+                                {{-- Trash/Remove Button --}}
+                                 <a class="wish-but wishlist-remove" data-product-id="{{ $wishlist->product->id }}" 
+                                    data-url="{{ route('remove.wishlist', $wishlist->product->id ) }}" 
+                                    data-login="{{ route('user.login') }}" href="javascript:void(0);"><i class="bi bi-trash"></i>
+                                </a>
                             </div>
 
                         </div>
