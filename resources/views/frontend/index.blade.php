@@ -126,12 +126,56 @@
         
         .hero-content {
             position: relative;
-            max-width: 520px;
-            margin: 0 auto;  /* 🔥 centers block */
-            text-align: center;
+            max-width: 920px;
+            margin: 0 auto;  
+            text-align: left;
             color: white;
         }
 
+        @media (max-width: 692px) {
+            .hero-content{
+               text-align: center;  
+            }
+
+            .hero-banner{
+                height: 248px !important;
+            }
+
+            .hero-title{
+                font-size: 24px !important;
+            }
+
+            .hero-text {
+                font-size: 14px !important;
+                margin-bottom: 0px !important;
+            }
+
+            .hero-cta {
+                margin-top: 20px;
+                display: inline-block;
+                padding: 8px 14px;
+                font-size: 13px;
+            }
+
+            .hero-ctrl {
+                width: 34px !important;
+                height: 34px !important;
+                border: 2px solid #ffffff !important;;
+            }
+ 
+        }
+
+        @media (max-width: 1025px) {
+            .hero-content{
+                max-width: 750px !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-content{
+                max-width: 550px !important;
+            }
+        }
         .hero-title {
             font-size: 42px;
             font-weight: 700;
@@ -227,7 +271,7 @@
                     @foreach ($sliders as $slider)
                         <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
                             <div class="hero-banner"
-                                style="background-image: url('{{ asset($slider->image) }}')">
+                               style="background: url('public/frontend/banner-gif.gif') no-repeat center center; background-size: cover;">
 
                                 <div class="hero-overlay"></div>
 
