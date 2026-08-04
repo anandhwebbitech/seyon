@@ -321,13 +321,57 @@ class AdminController extends Controller
     //     }
     // }
 
+    // public function bannerImageAdd(Request $request)
+    // {
+    //     $request->validate([
+    //         'title' => 'required|string|max:255',
+    //         'description' => 'required|string',
+    //         'banner_link' => 'required|url',
+    //         'image' => 'required|image|mimes:jpg,jpeg,png,webp,gif|max:2048',
+    //     ]);
+
+    //     $banner = new BannerImages();
+
+    //     if ($request->hasFile('image')) {
+    //         $image = $request->file('image');
+    //         $fileName = time() . '.' . $image->getClientOriginalExtension();
+    //         $image->move(public_path('banner_images'), $fileName);
+    //         $banner->image = 'banner_images/' . $fileName;
+    //     }
+
+    //     $banner->title = $request->title;
+    //     $banner->description = $request->description;
+    //     $banner->banner_link = $request->banner_link;
+    //     $banner->save();
+
+    //     return redirect()
+    //         ->route('admin.banner.show')
+    //         ->with('success', 'Banner image added successfully');
+    // }
+
+
+    // public function bannerImageUpdate(Request $request)
+    // {
+    //     $banner_images = BannerImages::where('id', '1')->first();
+    //     if ($request->hasFile('image')) {
+    //         $image = $request->file('image');
+    //         $fileName = time() . '.' . $image->getClientOriginalExtension();
+    //         $image->move(public_path('banner_images'), $fileName);
+    //         $banner_images->image = $fileName;
+    //     }
+
+    //     $banner_images->save();
+    //     if ($banner_images) {
+    //         return redirect()->route('admin.banner.show')->with('success', 'Banner image has been updated successfully')->with('refresh', true);
+    //     }
+    // }
     public function bannerImageAdd(Request $request)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
+            'title'       => 'required|string|max:255',
             'description' => 'required|string',
             'banner_link' => 'required|url',
-            'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'image'       => 'required|file|mimes:jpg,jpeg,png,webp,gif|max:5120', 
         ]);
 
         $banner = new BannerImages();
@@ -349,21 +393,32 @@ class AdminController extends Controller
             ->with('success', 'Banner image added successfully');
     }
 
-
     public function bannerImageUpdate(Request $request)
     {
         $banner_images = BannerImages::where('id', '1')->first();
+
         if ($request->hasFile('image')) {
+            $request->validate([
+                'image' => 'required|file|mimes:jpg,jpeg,png,webp,gif|max:5120',
+            ]);
+
+            if ($banner_images->image && file_exists(public_path($banner_images->image))) {
+                @unlink(public_path($banner_images->image));
+            }
+
             $image = $request->file('image');
             $fileName = time() . '.' . $image->getClientOriginalExtension();
             $image->move(public_path('banner_images'), $fileName);
-            $banner_images->image = $fileName;
+            
+            // Corrected path to include directory name
+            $banner_images->image = 'banner_images/' . $fileName; 
         }
 
         $banner_images->save();
-        if ($banner_images) {
-            return redirect()->route('admin.banner.show')->with('success', 'Banner image has been updated successfully')->with('refresh', true);
-        }
+
+        return redirect()
+            ->route('admin.banner.show')
+            ->with('success', 'Banner image has been updated successfully');
     }
 
 

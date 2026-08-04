@@ -271,7 +271,7 @@
                     @foreach ($sliders as $slider)
                         <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
                             <div class="hero-banner"
-                               style="background: url('public/frontend/banner-gif.gif') no-repeat center center; background-size: cover;">
+                                style="background: url('{{ asset($slider->image) }}') no-repeat center center; background-size: cover;">
 
                                 <div class="hero-overlay"></div>
 
@@ -290,7 +290,6 @@
 
                             </div>
                         </div>
-
                     @endforeach
                 @endif
             </div>
